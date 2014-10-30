@@ -21,4 +21,11 @@
             </block>
         </reference>
     </catalog_category_layered>
+    <checkout_cart_index>
+        <reference name="head">
+            <block type="cms/block" name="category_dataLayer">
+                <action method="setBlockId"><block_id>cart_datalayer</block_id></action>
+            </block>
+        </reference>
+    </checkout_cart_index>
 </layout>

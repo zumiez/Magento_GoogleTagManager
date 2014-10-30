@@ -30,6 +30,16 @@
 				<class>CVM_GoogleTagManager_Model</class>
 			</googletagmanager>
 		</models>
+        <resources>
+            <cvm_googletagmanager_setup>
+                <setup>
+                    <module>CVM_GoogleTagManager</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </cvm_googletagmanager_setup>
+        </resources>
 	</global>
 	<frontend>
 		<translate>
