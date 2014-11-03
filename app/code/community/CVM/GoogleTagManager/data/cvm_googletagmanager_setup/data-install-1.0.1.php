@@ -76,12 +76,10 @@ Mage::getModel('cms/block')
 ob_start(); ?>
 
     <script>
-        (function(){
-            var remove_element = document.querySelector('.removeFromCart');
+        document.observe("dom:loaded", function() {
             $$('.removeFromCart').invoke('observe','click', function(event){
                 event.preventDefault();
-                var href = $j(this).attr('href');
-                var target = $j(this).attr('target');
+                var href = $(this).href;
                 if (typeof dataLayer != 'undefined') {
                     dataLayer.push({
                         'event' : 'remove-from-cart',
@@ -91,11 +89,12 @@ ob_start(); ?>
                 }
                 setTimeout(function(){
                     // short delay to allow tracking to complete
-                    window.open(href,(!target?"_self":target));
+                    window.open(href,"_self")
                 }, 200);
             })
-        })();
+        });
     </script>
+
 
 <?php
 $contents = ob_get_clean();
@@ -104,6 +103,82 @@ $block_id = 'cart_datalayer';
 Mage::getModel('cms/block')
     ->load($block_id)
     ->setTitle('Cart DataLayer')
+    ->setIdentifier($block_id)
+    ->setIsActive(true)
+    ->setStores($aStores)
+    ->setContent($contents)
+    ->save();
+
+// CMS BLOCK checkout_datalayer
+
+ob_start(); ?>
+
+<script>
+    document.observe("dom:loaded", function() {
+        if (typeof dataLayer != 'undefined') {
+            // shipping step 1a
+            var initialShippingRadio = $$('input:checked[type="radio"][name="shipping:form"]').pluck('value')[0];
+            dataLayer.push({
+                'event': 'view-shipping',
+                'shippingOption': initialShippingRadio
+            });
+
+            $$('input[name="shipping:form"]').each(
+                function (el) {
+                    el.observe('click', function () {
+                        dataLayer.push({
+                            'event': 'shipping-option-update',
+                            'shippingOption': this.value
+                        });
+                    });
+                });
+
+            // shipping step 1b
+
+            $('co-shipping-method-form').on('change', '.radio', function (event) {
+                var shippingMethodTitle = $$('input:checked[type=radio][name=shipping_method]')[0].dataset.title;
+                var shippingMethodDescription = $$('input:checked[type=radio][name=shipping_method]')[0].dataset.description;
+                var fullShippingDescription = shippingMethodTitle + ' ' + shippingMethodDescription;
+                dataLayer.push({
+                    'event': 'shipping-option-update',
+                    'shippingOption': fullShippingDescription
+                });
+            });
+
+            // billing step 2
+            var initialBillingRadio  = $$('input:checked[type="radio"][name="payment[method]"]').pluck('value')[0];
+            if (initialBillingRadio == 'cybersource_soap') initialBillingRadio = 'Credit Card';
+            if (initialBillingRadio == 'paypal_express') initialBillingRadio = 'Paypal';
+            dataLayer.push({
+                'event': 'view-billing',
+                'billingOption': initialBillingRadio
+            });
+            $$('input[name="payment[method]"]').each(
+                function (el) {
+                    el.observe('click', function () {
+                        var billingChoice = this.value;
+                        if (billingChoice == 'cybersource_soap') initialBillingRadio = 'Credit Card';
+                        if (billingChoice == 'paypal_express') initialBillingRadio = 'Paypal';
+
+                        dataLayer.push({
+                            'event': 'billing-option-update',
+                            'billingOption': billingChoice
+                        });
+                    });
+                }
+            );
+        }
+    });
+</script>
+
+
+<?php
+$contents = ob_get_clean();
+$aStores = array(0);
+$block_id = 'checkout_datalayer';
+Mage::getModel('cms/block')
+    ->load($block_id)
+    ->setTitle('Checkout DataLayer')
     ->setIdentifier($block_id)
     ->setIsActive(true)
     ->setStores($aStores)

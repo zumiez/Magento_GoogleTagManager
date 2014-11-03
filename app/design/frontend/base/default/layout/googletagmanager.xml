@@ -28,4 +28,13 @@
             </block>
         </reference>
     </checkout_cart_index>
+    <checkout_onepage_index>
+        <reference name="head">
+            <block type="cms/block" name="checkout_dataLayer">
+                <action method="setBlockId">
+                    <block_id>checkout_datalayer</block_id>
+                </action>
+            </block>
+        </reference>
+    </checkout_onepage_index>
 </layout>
