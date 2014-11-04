@@ -14,9 +14,7 @@ ob_start(); ?>
 
             // FOR QUICKSHOP
             $j('body').on('click', '#zumiez-quick-add-to-bag', function(event){
-
                 var form_data_array = $j('#product_addtocart_form').serializeArray();
-
                 if ( form_data_array[3] !=undefined ) {
                     var qs_prod_sku = form_data_array[0].value;
                     var qs_prod_qty = form_data_array[3].value;
@@ -33,19 +31,13 @@ ob_start(); ?>
             // FOR CATEGORY PAGE PRODUCTS
             $j('.item a').on('click', function(event){
                 event.preventDefault();
-
                 var href = $j(this).attr('href');
                 var target = $j(this).attr('target');
-                var image_el = $j(this).children('img');
-                var img_class = $j(image_el).attr('class');
-                if (!img_class) return;
-
-                var prod_sku = img_class.match(/[\d]+$/)[0];
-
+                var product_id = $j(this).attr('data-prodid');
                 if (typeof dataLayer != 'undefined') {
                     dataLayer.push({
                         'event' : 'product-click',
-                        'sku' : prod_sku
+                        'sku' : product_id
                     });
                 }
                 // need slight delay to ensure data gets sent before page reloads
@@ -71,10 +63,43 @@ Mage::getModel('cms/block')
     ->setContent($contents)
     ->save();
 
+// CMS BLOCK pdp_datalayer
+
+ob_start(); ?>
+    <script>
+        document.observe("dom:loaded", function() {
+            $('zumiez-add-to-bag').observe('click', function(event){
+                var form_data_array = $('product_addtocart_form').serialize(true);
+                var product_id = form_data_array.product;
+                var product_qty = form_data_array.qty;
+                if (typeof dataLayer != 'undefined') {
+                    dataLayer.push({
+                        'event': 'add-to-cart',
+                        'sku': product_id,
+                        'quantity': product_qty
+                    });
+                }
+            });
+        });
+    </script>
+
+<?php
+$contents = ob_get_clean();
+$aStores = array(0);
+$block_id = 'pdp_datalayer';
+Mage::getModel('cms/block')
+    ->load($block_id)
+    ->setTitle('PDP DataLayer')
+    ->setIdentifier($block_id)
+    ->setIsActive(true)
+    ->setStores($aStores)
+    ->setContent($contents)
+    ->save();
+
+
 // CMS BLOCK cart_datalayer
 
 ob_start(); ?>
-
     <script>
         document.observe("dom:loaded", function() {
             $$('.removeFromCart').invoke('observe','click', function(event){
@@ -94,7 +119,6 @@ ob_start(); ?>
             })
         });
     </script>
-
 
 <?php
 $contents = ob_get_clean();
