@@ -164,25 +164,26 @@ ob_start(); ?>
                 var shippingMethodDescription = $$('input:checked[type=radio][name=shipping_method]')[0].dataset.description;
                 var fullShippingDescription = shippingMethodTitle + ' ' + shippingMethodDescription;
                 dataLayer.push({
-                    'event': 'shipping-option-update',
+                    'event': 'shipping-rate-option-update',
                     'shippingOption': fullShippingDescription
                 });
             });
 
             // billing step 2
-            var initialBillingRadio  = $$('input:checked[type="radio"][name="payment[method]"]').pluck('value')[0];
+         /*   var initialBillingRadio  = $$('input:checked[type="radio"][name="payment[method]"]').pluck('value')[0];
             if (initialBillingRadio == 'cybersource_soap') initialBillingRadio = 'Credit Card';
             if (initialBillingRadio == 'paypal_express') initialBillingRadio = 'Paypal';
             dataLayer.push({
                 'event': 'view-billing',
                 'billingOption': initialBillingRadio
             });
+        */
             $$('input[name="payment[method]"]').each(
                 function (el) {
                     el.observe('click', function () {
                         var billingChoice = this.value;
-                        if (billingChoice == 'cybersource_soap') initialBillingRadio = 'Credit Card';
-                        if (billingChoice == 'paypal_express') initialBillingRadio = 'Paypal';
+                        if (billingChoice == 'cybersource_soap') billingChoice = 'Credit Card';
+                        if (billingChoice == 'paypal_express') billingChoice = 'Paypal';
 
                         dataLayer.push({
                             'event': 'billing-option-update',
