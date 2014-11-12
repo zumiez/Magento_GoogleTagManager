@@ -78,6 +78,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 		foreach ($collection as $order) {
 			if ($i == 0) {
 				// Build all fields for first order.
+                if ($order->getShippingCarrier()) {
+                    $transactionShippingMethod = $order->getShippingCarrier()->getCarrierCode();
+                } else {
+                    $transactionShippingMethod = null;
+                }
 				$data = array(
 					'event' => 'transaction',
 					'transactionId' => $order->getIncrementId(),
@@ -89,7 +94,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 					'transactionTax' => round($order->getBaseTaxAmount(),2),
 					'transactionPaymentType' => $order->getPayment()->getMethodInstance()->getTitle(),
 					'transactionCurrency' => $order->getOrderCurrencyCode(),
-					'transactionShippingMethod' => $order->getShippingCarrier()->getCarrierCode(),
+					'transactionShippingMethod' => $transactionShippingMethod,
 					'transactionPromoCode' => $order->getCouponCode(),
 					'transactionProducts' => array()
 				);
