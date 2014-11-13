@@ -104,7 +104,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 				$data['transactionTotal'] += $order->getBaseGrandTotal();
 				$data['transactionShipping'] += $order->getBaseShippingAmount();
 				$data['transactionTax'] += $order->getBaseTaxAmount();
-				$data['transactionShippingMethod'] .= '|'.$order->getShippingCarrier()->getCarrierCode();
+				$data['transactionShippingMethod'] .= '|'.$transactionShippingMethod;
 			}
 
 			// Build products array.
