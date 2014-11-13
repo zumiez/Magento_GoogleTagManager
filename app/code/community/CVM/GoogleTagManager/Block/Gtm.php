@@ -76,13 +76,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 		$products = array();
 
 		foreach ($collection as $order) {
+            if ($order->getShippingCarrier()) {
+                $transactionShippingMethod = $order->getShippingCarrier()->getCarrierCode();
+            } else {
+                $transactionShippingMethod = null;
+            }
 			if ($i == 0) {
 				// Build all fields for first order.
-                if ($order->getShippingCarrier()) {
-                    $transactionShippingMethod = $order->getShippingCarrier()->getCarrierCode();
-                } else {
-                    $transactionShippingMethod = null;
-                }
 				$data = array(
 					'event' => 'transaction',
 					'transactionId' => $order->getIncrementId(),
