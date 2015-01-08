@@ -76,7 +76,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 		$products = array();
 
 		foreach ($collection as $order) {
-            if ($order->getShippingCarrier()) {
+            /**
+	    * do not try to get shipping Carrier if shipping method is not provided
+	    * it will result in a PHP Error Notice @see Mage_Sales_Model_Order::getShippingMethod()
+	    * if order is all virtual (has only gift cards)
+	    * */
+            if ($order->getShippingAddress() &&  $order->getShippingCarrier()) {
                 $transactionShippingMethod = $order->getShippingCarrier()->getCarrierCode();
             } else {
                 $transactionShippingMethod = null;
