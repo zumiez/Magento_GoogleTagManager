@@ -53,7 +53,7 @@ class CVM_GoogleTagManager_Block_Gtm extends Mage_Core_Block_Template
 		$data = $data_layer->getData();
 
 		// Generate the data layer JavaScript.
-		if (!empty($data)) return "<script>dataLayer = [".json_encode($data)."];</script>\n\n";
+		if (!empty($data)) return "<script>dataLayer.push(".json_encode($data).");</script>\n\n";
 		else return '';
 	}
 
